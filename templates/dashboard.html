@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Hypertension Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏥 HP Predictor</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" onclick="showTab('prediction')">
+                    📊 New Prediction
+                </button>
+                <button class="nav-item" onclick="showTab('history')">
+                    📈 History
+                </button>
+                <button class="nav-item" onclick="showTab('resources')">
+                    📚 Resources
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-top">
+                    <h1>Welcome, <span id="username">User</span>!</h1>
+                    <div id="location-status" class="location-status">⚠️ Enable location to find doctors near you</div>
+                </div>
+                <p class="subtitle">Monitor and predict your blood pressure health</p>
+            </header>
+
+            <!-- Prediction Tab -->
+            <section id="prediction" class="tab-content active">
+                <div class="card">
+                    <h2>📋 Enter Your Health Information</h2>
+                    <form id="prediction-form" class="prediction-form">
+                        <!-- Basic Information -->
+                        <h3 class="form-section-title">Basic Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="age">Age (years)</label>
+                                <input type="number" id="age" min="18" max="120" placeholder="35" value="35" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sex">Sex</label>
+                                <select id="sex" required>
+                                    <option value="">Select...</option>
+                                    <option value="0">Female</option>
+                                    <option value="1">Male</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Blood Pressure & Heart Rate -->
+                        <h3 class="form-section-title">Blood Pressure & Heart Rate</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="systolic">Systolic BP (mmHg)</label>
+                                <input type="number" id="systolic" min="60" max="250" placeholder="120" value="120" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="diastolic">Diastolic BP (mmHg)</label>
+                                <input type="number" id="diastolic" min="40" max="150" placeholder="80" value="80" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="heart_rate">Heart Rate (bpm)</label>
+                                <input type="number" id="heart_rate" min="40" max="220" placeholder="72" value="72" required>
+                            </div>
+                        </div>
+
+                        <!-- Chest Pain & Symptoms -->
+                        <h3 class="form-section-title">Chest Pain & Symptoms</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cp">Chest Pain Type</label>
+                                <select id="cp" required>
+                                    <option value="">Select...</option>
+                                    <option value="0">Typical Angina</option>
+                                    <option value="1">Atypical Angina</option>
+                                    <option value="2">Non-Anginal Pain</option>
+                                    <option value="3">Asymptomatic</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exang">Exercise-Induced Angina</label>
+                                <select id="exang" required>
+                                    <option value="">Select...</option>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="oldpeak">ST Depression (exercise)</label>
+                                <input type="number" id="oldpeak" min="0" max="10" step="0.1" placeholder="0.0" value="0.0" required>
+                            </div>
+                        </div>
+
+                        <!-- Metabolic Factors -->
+                        <h3 class="form-section-title">Metabolic Factors</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cholesterol">Cholesterol (mg/dL)</label>
+                                <input type="number" id="cholesterol" min="100" max="600" placeholder="200" value="200" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="glucose">Glucose (mg/dL)</label>
+                                <input type="number" id="glucose" min="50" max="300" placeholder="100" value="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fbs">Fasting Blood Sugar &gt; 120</label>
+                                <select id="fbs" required>
+                                    <option value="">Select...</option>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- ECG & Heart Tests -->
+                        <h3 class="form-section-title">Cardiac Test Results</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="restecg">Resting ECG</label>
+                                <select id="restecg" required>
+                                    <option value="">Select...</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">ST-T Abnormality</option>
+                                    <option value="2">LV Hypertrophy</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="slope">ST Segment Slope</label>
+                                <select id="slope" required>
+                                    <option value="">Select...</option>
+                                    <option value="1">Upsloping</option>
+                                    <option value="2">Flat</option>
+                                    <option value="3">Downsloping</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ca">Major Vessels (0-3)</label>
+                                <select id="ca" required>
+                                    <option value="">Select...</option>
+                                    <option value="0">0 vessels</option>
+                                    <option value="1">1 vessel</option>
+                                    <option value="2">2 vessels</option>
+                                    <option value="3">3 vessels</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Blood Disorders -->
+                        <h3 class="form-section-title">Blood Disorder Status</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="thal">Thalassemia Type</label>
+                                <select id="thal" required>
+                                    <option value="">Select...</option>
+                                    <option value="3">Normal</option>
+                                    <option value="6">Fixed Defect</option>
+                                    <option value="7">Reversible Defect</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large">Get Prediction</button>
+                    </form>
+                </div>
+
+                <!-- Result Card -->
+                <div id="result-container" class="result-container" style="display: none;">
+                    <div id="result-card" class="card result-card"></div>
+                </div>
+            </section>
+
+            <!-- History Tab -->
+            <section id="history" class="tab-content">
+                <div class="card">
+                    <h2>📈 Your Prediction History</h2>
+                    <div id="history-list" class="history-list">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resources Tab -->
+            <section id="resources" class="tab-content">
+                <div class="card">
+                    <h2>📚 Health Resources & Tips</h2>
+                    <div class="resources-grid">
+                        <div class="resource-item">
+                            <h3>🥗 Diet Tips</h3>
+                            <ul>
+                                <li>Reduce sodium intake</li>
+                                <li>Eat more potassium-rich foods</li>
+                                <li>Include lean proteins</li>
+                                <li>Consume whole grains</li>
+                            </ul>
+                        </div>
+                        <div class="resource-item">
+                            <h3>💪 Exercise Guidelines</h3>
+                            <ul>
+                                <li>150 minutes moderate activity/week</li>
+                                <li>Strength training 2x/week</li>
+                                <li>Regular walking</li>
+                                <li>Yoga and stretching</li>
+                            </ul>
+                        </div>
+                        <div class="resource-item">
+                            <h3>😌 Stress Management</h3>
+                            <ul>
+                                <li>Meditation practices</li>
+                                <li>Deep breathing exercises</li>
+                                <li>Adequate sleep (7-9 hours)</li>
+                                <li>Limit caffeine</li>
+                            </ul>
+                        </div>
+                        <div class="resource-item">
+                            <h3>⏰ Lifestyle Habits</h3>
+                            <ul>
+                                <li>Monitor blood pressure regularly</li>
+                                <li>Quit smoking</li>
+                                <li>Limit alcohol</li>
+                                <li>Maintain healthy weight</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>
